@@ -22,6 +22,17 @@ class QueryBuilder
         $this->queryFactory = new QueryFactory('mysql');
     }
 
+    public function getCats()
+    {
+        $items = $this->queryFactory->newSelect();
+        $items->cols(['*'])->from('category');
+        $sth = $this->pdo->prepare($items->getStatement());
+        $sth->execute($items->getBindValues());
+        $res = $sth->fetchAll(PDO::FETCH_ASSOC);
+        return $res;
+    }
+
+
     public function itemCount($table)
     {
         $items = $this->queryFactory->newSelect();
@@ -30,6 +41,20 @@ class QueryBuilder
         $sth->execute($items->getBindValues());
         $res = $sth->fetchAll(PDO::FETCH_ASSOC);
         return count($res);
+    }
+
+    public function userName($userid) {
+        $items = $this->queryFactory->newSelect();
+        $items->cols(['*'])
+            ->from('posts')
+            ->where('userid = :userid')
+            ->bindValues([                  // bind these values to named placeholders
+                'userid' => $userid,
+            ]);
+        $sth = $this->pdo->prepare($items->getStatement());
+        $sth->execute($items->getBindValues());
+        $res = $sth->fetchAll(PDO::FETCH_ASSOC);
+        return $res;
     }
 
     public function getPosts()
@@ -58,7 +83,42 @@ class QueryBuilder
 
         $sth->execute($select->getBindValues());
        return $sth->fetchAll(PDO::FETCH_ASSOC);
+    }
 
+    public function getAllCats($table, $cat)
+    {
+        $select = $this->queryFactory->newSelect();
+        $select->cols(['*'])
+            ->from("$table")
+            ->join(
+                'LEFT',
+                'pictures AS p',
+                'posts.id = p.postid'
+            )
+            ->where('category = :category')
+            ->bindValue ('category', $cat)
+            ->setPaging(3)
+            ->page($_GET['page'] ?? 1);
+        $sth = $this->pdo->prepare($select->getStatement());
+
+        $sth->execute($select->getBindValues());
+        return $sth->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+
+    public function getUserName ()
+    {
+        $select = $this->queryFactory->newSelect();
+        $select->cols(['*'])
+            ->from('users')
+            ->join(
+                'LEFT',
+                'comment AS c',
+                'users.id = c.userid'
+            );
+        $sth = $this->pdo->prepare($select->getStatement());
+        $sth->execute($select->getBindValues());
+        return $sth->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function getOne($table, int $id)
@@ -83,10 +143,14 @@ class QueryBuilder
     }
 
     public function viewComments($postid) {
-
         $items = $this->queryFactory->newSelect();
         $items->cols(['*'])
-            ->from('comment')
+            ->from('users')
+            ->join(
+                'INNER',
+                'comment AS c',
+                'users.id = c.userid'
+            )
             ->where('postid = :postid')
             ->bindValues([                  // bind these values to named placeholders
                 'postid' => $postid,
@@ -96,7 +160,40 @@ class QueryBuilder
         $res = $sth->fetchAll(PDO::FETCH_ASSOC);
        return $res;
     }
+//
+//    public function viewComments($postid) {
+//        $items = $this->queryFactory->newSelect();
+//        $items->cols(['*'])
+//            ->from('comment')
+//            ->join(
+//                'INNER',
+//                'users AS u',
+//                'comment.userid = u.id'
+//            )
+//            ->where('postid = :postid')
+//            ->bindValues([                  // bind these values to named placeholders
+//                'postid' => $postid,
+//            ]);
+//        $sth = $this->pdo->prepare($items->getStatement());
+//        $sth->execute($items->getBindValues());
+//        $res = $sth->fetchAll(PDO::FETCH_ASSOC);
+//        return $res;
+//    }
 
+
+    public function viewUser($userid) {
+        $items = $this->queryFactory->newSelect();
+        $items->cols(['*'])
+            ->from('users')
+            ->where('id = :id')
+            ->bindValues([                  // bind these values to named placeholders
+                'id' => $userid,
+            ]);
+        $sth = $this->pdo->prepare($items->getStatement());
+        $sth->execute($items->getBindValues());
+        $res = $sth->fetchAll(PDO::FETCH_ASSOC);
+        return $res;
+    }
 
         public function insert($table, $data) {
 
@@ -110,12 +207,11 @@ class QueryBuilder
 
             $name = $insert->getLastInsertIdName('id');
             $id = $this->pdo->lastInsertId($name);
-return $id;
+            return $id;
     }
 
     public function update($table, $id, $data) {
         $update = $this->queryFactory->newUpdate();
-
         $update
             ->table($table)                  // update this table
             ->cols($data)

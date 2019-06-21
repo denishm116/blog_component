@@ -10,13 +10,14 @@ namespace App\controllers;
 use App\QueryBuilder;
 use League\Plates\Engine;
 use App\models\getData;
+
 use Delight\Auth\Auth;
 
 
     class PostController
     {
         public $templates;
-private $auth;
+        private $auth;
         private $qb;
 
         public function __construct(QueryBuilder $qb, Engine $engine, Auth $auth)
@@ -24,6 +25,14 @@ private $auth;
             $this->qb = $qb;
             $this->templates = $engine;
             $this->auth =$auth;
+            $cats = $this->qb->getCats();
+            $this->templates->addData(['cats' => $cats]);
+
+            $admin = $this->auth->hasRole(\Delight\Auth\Role::ADMIN);
+            $this->admin = $admin;
+
+            $user = $this->auth->hasRole(\Delight\Auth\Role::AUTHOR);
+            $this->user = $user;
         }
 
         public function getOnePost($id) {
@@ -33,12 +42,32 @@ private $auth;
             $postsNext = $this->qb->getOne('pictures', $nextPrev[0]);
             $postsPrev = $this->qb->getOne('pictures', $nextPrev[1]);
             $posts = $this->qb->getOne('pictures', $id);
-            $admin = $this->auth->hasRole(\Delight\Auth\Role::ADMIN);
-            $user = $this->auth->hasRole(\Delight\Auth\Role::AUTHOR);
             $comment = $this->qb->viewComments($id);
-            s($comment);
-            echo $this->templates->render('single-page', ['admin'=>$admin, 'user'=>$user, 'posts' => $posts, 'id' => $id, 'nextPrev' => $nextPrev, 'postsNext' => $postsNext, 'postsPrev' => $postsPrev, 'comment' => $comment[0]]);
+
+            echo $this->templates->render('single-page', ['admin'=>$this->admin, 'user'=>$this->user, 'posts' => $posts, 'id' => $id, 'nextPrev' => $nextPrev, 'postsNext' => $postsNext, 'postsPrev' => $postsPrev, 'comment' => $comment]);
+        }
+
+        public function postAnswer()
+        {
+            $data = $_POST;
+            $id = $data['postid'];
+
+           $this->qb->update('comment', $id, ['answer' => $data['description']]);
+            header("Location: {$_SERVER['HTTP_REFERER']}");
 
         }
+
+        public function getAllCats($name)
+        {
+            $pag = new getData($this->qb, $this->templates);
+            $paginator = $pag->paginator(3, $_GET['page'] ?? 1, '?page=(:num)');
+            $posts = $this->qb->getAllCats('posts', $name);
+            if ($this->admin) {
+                echo $this->templates->render('posts_admin', ['posts' => $posts, 'paginator' => $paginator, 'admin'=>$this->admin, 'user' => $this->user]);
+            } else {
+                echo $this->templates->render('posts', ['posts' => $posts, 'paginator' => $paginator, 'admin'=>$this->admin, 'user' => $this->user]);
+            }
+        }
+
 
     }

@@ -8,8 +8,7 @@
 
 namespace App\controllers;
 
-use DI\Container;
-use JasonGrimes\Paginator;
+
 use App\QueryBuilder;
 use Delight\Auth\Auth;
 use App\models;
@@ -27,18 +26,23 @@ class UserController
         $this->qb = $qb;
         $this->templates = $engine;
         $this->auth =$auth;
+        $cats = $this->qb->getCats();
+        $this->templates->addData(['cats' => $cats]);
+
+        $admin = $this->auth->hasRole(\Delight\Auth\Role::ADMIN);
+        $this->admin = $admin;
+
+        $user = $this->auth->hasRole(\Delight\Auth\Role::AUTHOR);
+        $this->user = $user;
     }
 
     public function loginform() {
-        $admin = $this->auth->hasRole(\Delight\Auth\Role::ADMIN);
-        $user = $this->auth->hasRole(\Delight\Auth\Role::AUTHOR);
-        echo $this->templates->render('login', ['admin'=>$admin, 'user'=>$user]);
+
+        echo $this->templates->render('login', ['admin'=>$this->admin, 'user'=>$this->user]);
     }
 
     public function login() {
 
-        $admin = $this->auth->hasRole(\Delight\Auth\Role::ADMIN);
-        $user = $this->auth->hasRole(\Delight\Auth\Role::AUTHOR);
         $posts = $this->qb->getAll('posts');
 
         $pag = new models\getData($this->qb, $this->templates);
@@ -47,10 +51,9 @@ class UserController
             $this->auth->login($_POST['email'], $_POST['password']);
             if ($this->auth->hasRole(\Delight\Auth\Role::ADMIN)) {
 
-                echo $this->templates->render('posts_admin', ['posts' => $posts, 'paginator' => $paginator, 'admin'=>$admin, 'user'=>$user]);
+                echo $this->templates->render('posts_admin', ['posts' => $posts, 'paginator' => $paginator, 'admin'=>$this->admin, 'user'=>$this->user]);
             } else {
-
-                              echo $this->templates->render('posts', ['posts' => $posts, 'paginator' => $paginator, 'admin'=>$admin, 'user'=>$user]);
+                        echo $this->templates->render('posts', ['posts' => $posts, 'paginator' => $paginator, 'admin'=>$this->admin, 'user'=>$this->user]);
             }
         }
         catch (\Delight\Auth\InvalidEmailException $e) {
@@ -74,11 +77,10 @@ class UserController
 
 
     public function register() {
-        $admin = $this->auth->hasRole(\Delight\Auth\Role::ADMIN);
-        $user = $this->auth->hasRole(\Delight\Auth\Role::AUTHOR);
+
         $posts = ['q' => 'w'];
         $this->templates->addData(['da' => $posts], 'welcome');
-        echo $this->templates->render('register', ['posts' => $posts,  'admin'=>$admin, 'user'=>$user]);
+        echo $this->templates->render('register', ['posts' => $posts,  'admin'=>$this->admin, 'user'=>$this->user]);
     }
 
     public function registration() {

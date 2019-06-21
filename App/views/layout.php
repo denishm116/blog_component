@@ -66,12 +66,10 @@
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown"  role="button"
                                aria-haspopup="true" aria-expanded="false">Категории</a>
-                            <ul class="dropdown-menu">
-                                <li class=""><a href="portfolio-2-columns.html">Portfolio 2 Columns</a></li>
-                                <li class=""><a href="portfolio-3-columns.html">Portfolio 3 Columns</a></li>
-                                <li class=""><a href="portfolio-4-columns.html">Portfolio 4 Columns</a></li>
-                                <li class=""><a href="single-portfolio.html">Single Portfolio</a></li>
-                            </ul>
+
+                            <?=$this->insert('categorys')?>
+
+
                         </li>
                         <li class="dropdown">
                             <?php if ($admin || $user):?>

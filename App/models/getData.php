@@ -22,6 +22,10 @@ class getData
         $this->templates = $engine;
     }
 
+    public function categorys()
+    {
+
+    }
 
      public function paginator(int $item, $way, $url) {
          $itemCount = $this->qb->itemCount('posts');

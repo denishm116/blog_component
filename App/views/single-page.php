@@ -1,5 +1,5 @@
 <?php $this->layout('layout', ['title' => $posts['title'], 'admin' => $admin, 'user' => $user]) ?>
-<?php s($_SESSION); ?>
+<?php //s($_SESSION); ?>
 <article class="single-blog">
     <div class="post-thumb">
         <img src="/assets/upload/<?php echo $posts['imglogo'];?>" alt="">
@@ -7,9 +7,16 @@
 
     <div class="post-content">
         <div class="entry-header text-center text-uppercase">
-            <a href="#" class="post-cat"><?php echo $posts['title'];?></a>
-            <h2>Adventure to travel lonely</h2>
+            <h2>  <a href="#" class="post-cat"><?php echo $posts['title'];?></a></h2>
+
         </div>
+
+        <div class="entry-header text-center text-uppercase">
+            <a href="#" class="post-cat"><?php echo $posts['category'];?></a>
+
+        </div>
+
+
         <div class="entry-content">
             <?php echo $posts['description'];?>
         </div>
@@ -78,96 +85,91 @@
         </div>
     </div>
 </div>
-<div class="related-post-carousel"><!--related post carousel-->
-    <div class="related-heading">
-        <h4>You might also like</h4>
-    </div>
-    <div class="related-post-carousel-items">
-        <div class="single-item">
-            <a href="#">
-                <img src="/assets/images/p-1.jpg" alt="">
-                <h4>Lorem ipsum dolor sit amet,</h4>
-            </a>
-        </div>
-        <div class="single-item">
-            <a href="#">
-                <img src="/assets/images/p-2.jpg" alt="">
-                <h4>Just Wondering at Beach</h4>
-            </a>
-        </div>
-        <div class="single-item">
-            <a href="#">
-                <img src="/assets/images/p-3.jpg" alt="">
-                <h4>Nonumy eirmod tempor invidunt</h4>
-            </a>
-        </div>
-        <div class="single-item">
-            <a href="#">
-                <img src="/assets/images/p-1.jpg" alt="">
-                <h4>Justo duo dolores et ea rebum</h4>
-            </a>
-        </div>
-        <div class="single-item">
-            <a href="#">
-                <img src="/assets/images/p-2.jpg" alt="">
-                <h4>Duo dolores justo t ea rebum</h4>
-            </a>
-        </div>
-        <div class="single-item">
-            <a href="#">
-                <img src="/assets/images/p-3.jpg" alt="">
-                <h4>Duo dolores justo t ea rebum</h4>
-            </a>
+
+<?php foreach ($comment as $com) { ?>
+<div class="comment-area">
+
+    <div class="single-comment">
+        <div class="media">
+            <div class="media-left text-center">
+                <a href="#"><img class="media-object" src="/assets/upload/users/<?php echo $com['img'];?>" alt="<?php echo $com['username'];?>" height="50"></a>
+            </div>
+            <div class="media-body">
+                <div class="media-heading">
+                    <h3 class="text-uppercase">
+                        <a href="#"> <?php echo $com['username'];?></a>
+                    </h3>
+                    <h4 class="text-uppercase">
+                        <a href="#"> <?php echo $com['title'];?></a>
+                    </h4>
+
+
+                </div>
+                <p class="comment-date">
+                    <?php echo $com['date'];?>
+                </p>
+                <p class="comment-p">
+                    <?php echo $com['description'];?>
+                </p>
+            </div>
         </div>
     </div>
-</div>
-<?php s($comment);?>
-<!--<div class="comment-area">-->
-<!--    <div class="comment-heading">-->
-<!--        <h3>3 Thoughts</h3>-->
-<!--    </div>-->
-<!--    <div class="single-comment">-->
-<!--        <div class="media">-->
-<!--            <div class="media-left text-center">-->
-<!--                <a href="#"><img class="media-object" src="/assets/images/reply-1.jpg" alt=""></a>-->
-<!--            </div>-->
-<!--            <div class="media-body">-->
-<!--                <div class="media-heading">-->
-<!--                    <h3 class="text-uppercase">-->
-<!--                        <a href="#">John Smith</a>-->
-<!--                        <a href="#" class="pull-right reply-btn">reply</a>-->
-<!--                    </h3>-->
-<!--                </div>-->
-<!--                <p class="comment-date">-->
-<!--                    December, 02, 2017 at 5:57 PM-->
-<!--                </p>-->
-<!--                <p class="comment-p">-->
-<!--                    Nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sdiam-->
-<!--                    voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd-->
-<!--                    gubergren, no sea takimata sanctus est.-->
-<!--                </p>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--    <div class="single-comment single-comment-reply">-->
-<!--        <div class="media">-->
-<!--            <div class="media-left text-center">-->
-<!--                <a href="#"> <img class="media-object" src="/assets/images/reply-2.jpg" alt=""></a>-->
-<!--            </div>-->
-<!--            <div class="media-body">-->
-<!--                <div class="media-heading">-->
-<!--                    <h3 class="text-uppercase"><a href="#">Joan Coal</a></h3>-->
-<!--                </div>-->
-<!--                <p class="comment-date">-->
-<!--                    2 days ago-->
-<!--                </p>-->
-<!--                <p class="comment-p">-->
-<!--                    Labore et dolore magna aliquyam erat, sdiam voluptua. At vero eos eaccusam et justo-->
-<!--                    duo dolores et ea rebum. Stet clita kasd.-->
-<!--                </p>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
+
+
+
+
+    <div class="single-comment single-comment-reply">
+        <div class="media">
+
+            <div class="media-body">
+                <div class="media-heading">
+                    <h3 class="text-uppercase"><a href="#">Администратор</a></h3>
+                </div>
+
+                <p class="comment-p">
+                    <?php echo $com['answer'];?>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <?php if ($admin): ?>
+    <div class="collapse bg-light" id="navbarHeader">
+        <div class="container">
+
+            <div class="row">
+
+
+                <form class="form-horizontal contact-form" method="post" action="/answer">
+                    <div class="container">
+                    <div class="form-group">
+                        <div class="form-group">
+                            <div class="col-md-8">
+                               <input type="hidden" class="form-control" id="subject" name="postid" value="<?php echo $com['id'];?>">
+
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-6">
+                                <textarea class="form-control" rows="6" name="description" placeholder="Write Massage" required=""></textarea>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn send-btn">Оставить ответ</button>
+                    </div></div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="navbar navbar-light bg-light shadow-sm">
+        <div class="container d-flex justify-content-between">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarHeader" aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
+                <span>Ответить</span>
+            </button>
+        </div>
+    </div>
+        <?php endif; ?>
+
+
 <!--    <div class="single-comment">-->
 <!--        <div class="media">-->
 <!--            <div class="media-left text-center">-->
@@ -192,10 +194,12 @@
 <!--            </div>-->
 <!--        </div>-->
 <!--    </div>-->
-<!--</div>-->
+</div>
+    <?php } ?>
 <!--leave comment-->
+<?php if ($admin || $user): ?>
 <div class="leave-comment">
-    <?php if ($admin || $user): ?>
+
     <h4>Leave a reply</h4>
 
     <form class="form-horizontal contact-form"   method="post" action="/addcomment">
@@ -209,16 +213,18 @@
         </div>
         <div class="form-group">
             <div class="col-md-12">
-                <input type="text" class="form-control" id="subject" name="title" placeholder="Website url">
+
                 <input type="hidden" class="form-control" id="subject" name="postid" value="<?php echo $posts['id']; ?>">
+                <input type="text" class="form-control" id="subject" name="title" value="Заголовок комментария">
             </div>
         </div>
         <div class="form-group">
             <div class="col-md-12">
-                <textarea class="form-control" rows="6" name="description" placeholder="Write Massage" required></textarea>
+                <textarea class="form-control" rows="6" name="description" placeholder="Комментарий" required></textarea>
             </div>
         </div>
         <button type="submit" class="btn send-btn">Post Comment</button>
+        </div>
     </form>
-<?php endif; ?>
 </div>
+<?php endif; ?>

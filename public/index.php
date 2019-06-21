@@ -19,7 +19,8 @@ $dispatcher = FastRoute\simpleDispatcher(function(FastRoute\RouteCollector $r) {
     $r->addRoute('GET', '/', ['App\controllers\HomeController', 'index']);
     $r->addRoute('GET', '/logout', ['App\controllers\UserController', 'logout']);
     $r->addRoute('GET', '/single-page[/{id:\d+}]', ['App\controllers\PostController', 'getOnePost']);
-    $r->addRoute('GET', '/fake', ['App\controllers\HomeController', 'fake']);
+    $r->addRoute('GET', '/cat[/{name:.+}]', ['App\controllers\PostController', 'getAllCats']);
+    $r->addRoute('POST', '/answer', ['App\controllers\PostController', 'postAnswer']);
     $r->addRoute('GET', '/addpost', ['App\controllers\HomeController', 'addpost']);
     $r->addRoute('POST', '/addposttodb', ['App\controllers\HomeController', 'addposttodb']);
     $r->addRoute('POST', '/registration', ['App\controllers\UserController', 'registration']);

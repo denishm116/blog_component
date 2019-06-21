@@ -26,8 +26,15 @@
         </div>
 
         <div class="form-group">
-            <div class="col-md-12">
-                <input type="text" class="form-control" id="subject" name="category" placeholder="Категория">
+            <div class="col-md-12">Категория
+                <select id="selectvalue" name="category" placeholder="Категория">
+
+                    <?php foreach ($cats as $cat) { ?>
+                    <option><?php echo $cat['title']; ?></option>
+<?php } ?>
+
+                </select>
+<!--                <input type="text" class="form-control" id="subject" name="category" placeholder="Категория">-->
             </div>
         </div>
         <div class="form-group ">
